@@ -6,7 +6,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
   readonly users = [
     { id: 1, name: 'John' },
-    { id: 2, name: 'Doe1' },
+    { id: 2, name: 'Doe' },
   ];
 
   @Get()
