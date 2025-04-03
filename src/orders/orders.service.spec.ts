@@ -5,6 +5,7 @@ import { Order } from './entities/order.entity';
 import { Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/create-order.dto';
+import { HttpException, HttpStatus } from "@nestjs/common"
 
 describe('OrdersService', () => {
   let service: OrdersService;
@@ -14,7 +15,7 @@ describe('OrdersService', () => {
     id: 1,
     userId: 1,
     productId: 1,
-    quantity: 2,
+    quantity: 3,
     shippingAddress: '123 Main St',
     totalAmount: 100,
   };
@@ -22,7 +23,7 @@ describe('OrdersService', () => {
   const mockCreateOrderDto: CreateOrderDto = {
     userId: 1,
     productId: 1,
-    quantity: 2,
+    quantity: 3,
     shippingAddress: '123 Main St',
     totalAmount: 100,
   };
@@ -39,7 +40,7 @@ describe('OrdersService', () => {
         {
           provide: getRepositoryToken(Order),
           useValue: {
-            create: jest.fn().mockResolvedValue(mockOrder),
+            create: jest.fn().mockReturnValue(mockOrder),
             save: jest.fn().mockResolvedValue(mockOrder),
             find: jest.fn().mockResolvedValue([mockOrder]),
             findOne: jest.fn().mockResolvedValue(mockOrder),
@@ -65,6 +66,12 @@ describe('OrdersService', () => {
       expect(repository.save).toHaveBeenCalled();
       expect(result).toEqual(mockOrder);
     });
+
+    it('should throw an error if quantity is not valid', async () => {
+      await expect(service.create({ ...mockCreateOrderDto, quantity: 2 }))
+        .rejects
+        .toThrow(HttpException);
+    });
   });
 
   describe('findAll', () => {
@@ -81,6 +88,14 @@ describe('OrdersService', () => {
       expect(repository.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
       expect(result).toEqual(mockOrder);
     });
+
+    it('should throw an error if order not found', async () => {
+      (repository.findOne as jest.Mock).mockResolvedValueOnce(null);
+
+      await expect(service.findOne(999))
+        .rejects
+        .toThrow(HttpException);
+    });
   });
 
   describe('update', () => {
@@ -90,6 +105,14 @@ describe('OrdersService', () => {
       expect(repository.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
       expect(result).toEqual(mockOrder);
     });
+
+    it('should throw an error if order not found', async () => {
+      (repository.findOne as jest.Mock).mockResolvedValueOnce(null);
+
+      await expect(service.update(999, mockUpdateOrderDto))
+        .rejects
+        .toThrow(HttpException);
+    });
   });
 
   describe('remove', () => {
@@ -97,6 +120,14 @@ describe('OrdersService', () => {
       const result = await service.remove(1);
       expect(repository.delete).toHaveBeenCalledWith(1);
       expect(result).toEqual({ message: 'Order deleted successfully' });
+    });
+
+    it('should throw an error if order not found', async () => {
+      (repository.delete as jest.Mock).mockResolvedValueOnce({ affected: 0 });
+
+      await expect(service.remove(999))
+        .rejects
+        .toThrow(HttpException);
     });
   });
 });

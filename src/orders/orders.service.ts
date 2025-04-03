@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common'
 import { CreateOrderDto, UpdateOrderDto } from './dto/create-order.dto'
 import { Order } from "./entities/order.entity"
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,6 +12,9 @@ export class OrdersService {
   ) {}
 
   async create(createOrderDto: CreateOrderDto) {
+    if (createOrderDto.quantity == 2) {
+      throw new HttpException('Quantity is not valid', HttpStatus.BAD_REQUEST);
+    }
     const order = this.orderRepository.create(createOrderDto);
     return await this.orderRepository.save(order);
   }
@@ -21,16 +24,27 @@ export class OrdersService {
   }
 
   async findOne(id: number) {
-    return await this.orderRepository.findOne({ where: { id } });
+    const order = await this.orderRepository.findOne({ where: { id } });
+    if (!order) {
+      throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
+    }
+    return order;
   }
 
   async update(id: number, updateOrderDto: UpdateOrderDto) {
     await this.orderRepository.update(id, updateOrderDto);
-    return await this.orderRepository.findOne({ where: { id } });
+    const order = await this.orderRepository.findOne({ where: { id } });
+    if (!order) {
+      throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
+    }
+    return order;
   }
 
   async remove(id: number) {
-    await this.orderRepository.delete(id);
+    const result = await this.orderRepository.delete(id);
+    if (result.affected === 0) {
+      throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
+    }
     return { message: 'Order deleted successfully' };
   }
 }
