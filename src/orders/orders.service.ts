@@ -1,55 +1,36 @@
 import { Injectable } from '@nestjs/common'
 import { CreateOrderDto, UpdateOrderDto } from './dto/create-order.dto'
 import { Order } from "./entities/order.entity"
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class OrdersService {
-  private orders: Order[] = [{
-    id: 1,
-    userId: 1,
-    productId: 1,
-    quantity: 1,
-    shippingAddress: "123 Main St",
-    totalAmount: 100,
-  },
-  {
-    id: 2,
-    userId: 2,
-    productId: 2,
-    quantity: 2,
-    shippingAddress: "456 Main St",
-    totalAmount: 200,
-  },
-  ];
+  constructor(
+    @InjectRepository(Order)
+    private orderRepository: Repository<Order>,
+  ) {}
 
-  create(createOrderDto: CreateOrderDto) {
-    const order = {
-      id: this.orders.length + 1,
-      ...createOrderDto,
-    }
-    this.orders.push(order as Order)
-    return order
+  async create(createOrderDto: CreateOrderDto) {
+    const order = this.orderRepository.create(createOrderDto);
+    return await this.orderRepository.save(order);
   }
 
-  findAll() {
-    return this.orders
+  async findAll() {
+    return await this.orderRepository.find();
   }
 
-  findOne(id: number) {
-    return this.orders.find((order) => order.id === id)
+  async findOne(id: number) {
+    return await this.orderRepository.findOne({ where: { id } });
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    const orderIndex = this.orders.findIndex((order) => order.id === id)
-    this.orders[orderIndex] = {
-      ...this.orders[orderIndex],
-      ...updateOrderDto,
-    }
-    return this.orders[orderIndex]
+  async update(id: number, updateOrderDto: UpdateOrderDto) {
+    await this.orderRepository.update(id, updateOrderDto);
+    return await this.orderRepository.findOne({ where: { id } });
   }
 
-  remove(id: number) {
-    this.orders = this.orders.filter((order) => order.id !== id)
-    return this.orders
+  async remove(id: number) {
+    await this.orderRepository.delete(id);
+    return { message: 'Order deleted successfully' };
   }
 }
