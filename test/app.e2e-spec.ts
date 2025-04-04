@@ -18,11 +18,23 @@ describe('AppController (e2e)', () => {
     app = moduleFixture.createNestApplication()
     await app.init()
     db = app.get(DataSource)
+    
+    // Create orders table explicitly
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS orders (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        userId INT NOT NULL,
+        productId INT NOT NULL,
+        quantity INT NOT NULL,
+        shippingAddress VARCHAR(255) NOT NULL,
+        totalAmount DECIMAL(10,2) NOT NULL
+      );
+    `);
   })
 
-  // afterAll(async () => {
-  //   await db.query('DELETE FROM orders;');
-  // });
+  afterAll(async () => {
+    await db.query('DELETE FROM orders;');
+  });
 
   afterAll(async () => {
     await app.close()
@@ -141,17 +153,17 @@ describe('AppController (e2e)', () => {
     })
   })
 
-  // describe('/orders/:id (DELETE)', () => {
-  //   it('should delete order when found', async () => {
-  //     await request(app.getHttpServer())
-  //       .delete(`/orders/${order.id}`)
-  //       .expect(200)
-  //   })
+  describe('/orders/:id (DELETE)', () => {
+    it('should delete order when found', async () => {
+      await request(app.getHttpServer())
+        .delete(`/orders/${order.id}`)
+        .expect(200)
+    })
 
-  //   it('should return 404 when order not found', async () => {
-  //     await request(app.getHttpServer())
-  //       .delete(`/orders/${order.id - 1}`)
-  //       .expect(204)
-  //   })
-  // })
+    it('should return 404 when order not found', async () => {
+      await request(app.getHttpServer())
+        .delete(`/orders/${order.id - 1}`)
+        .expect(204)
+    })
+  })
 })
