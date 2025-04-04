@@ -14,4 +14,5 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   database: process.env.DB_NAME,
   entities: [Order],
   synchronize: true,
+  
 }; 
