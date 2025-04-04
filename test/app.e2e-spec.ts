@@ -5,8 +5,6 @@ import { AppModule } from './../src/app.module'
 import { DataSource } from "typeorm"
 import { Order } from '../src/orders/entities/order.entity'
 
-// Set test environment before any imports that might use env variables
-process.env.NODE_ENV = 'test'
 
 describe('AppController (e2e)', () => {
   let app: INestApplication
