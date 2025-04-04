@@ -17,6 +17,6 @@ export class Order {
   @Column()
   shippingAddress: string;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   totalAmount: number;
 }
