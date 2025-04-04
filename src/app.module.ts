@@ -6,9 +6,14 @@ import { OrdersModule } from './orders/orders.module'
 import { APP_PIPE } from "@nestjs/core"
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/typeorm.config';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot(typeOrmConfig),
     OrdersModule
   ],

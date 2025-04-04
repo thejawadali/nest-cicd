@@ -7,7 +7,7 @@ Content-Type: application/json
 {
   "userId": 1,
   "productId": 1,
-  "quantity": 2,
+  "quantity": 12,
   "shippingAddress": "123 Main St, Anytown, USA",
   "totalAmount": 100
 }
@@ -19,4 +19,4 @@ GET {{baseUrl}}/orders HTTP/1.1
 ###
 
 
-GET {{baseUrl}}/orders/1 HTTP/1.1
+GET {{baseUrl}}/orders/112 HTTP/1.1

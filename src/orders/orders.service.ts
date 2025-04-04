@@ -26,7 +26,7 @@ export class OrdersService {
   async findOne(id: number) {
     const order = await this.orderRepository.findOne({ where: { id } });
     if (!order) {
-      throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('Order not found', HttpStatus.NO_CONTENT);
     }
     return order;
   }
@@ -35,7 +35,7 @@ export class OrdersService {
     await this.orderRepository.update(id, updateOrderDto);
     const order = await this.orderRepository.findOne({ where: { id } });
     if (!order) {
-      throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('Order not found', HttpStatus.NO_CONTENT);
     }
     return order;
   }
@@ -43,7 +43,7 @@ export class OrdersService {
   async remove(id: number) {
     const result = await this.orderRepository.delete(id);
     if (result.affected === 0) {
-      throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('Order not found', HttpStatus.NO_CONTENT);
     }
     return { message: 'Order deleted successfully' };
   }
