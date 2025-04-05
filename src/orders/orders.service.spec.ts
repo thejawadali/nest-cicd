@@ -59,6 +59,10 @@ describe('OrdersService', () => {
     expect(service).toBeDefined();
   });
 
+  it('should add two numbers', () => {
+    expect(1+2).toBe(3)
+  })
+
   describe('create', () => {
     it('should create a new order', async () => {
       const result = await service.create(mockCreateOrderDto);
