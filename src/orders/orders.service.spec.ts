@@ -1,11 +1,10 @@
+import { HttpException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { OrdersService } from './orders.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Order } from './entities/order.entity';
 import { Repository } from 'typeorm';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/create-order.dto';
-import { HttpException, HttpStatus } from "@nestjs/common"
+import { CreateOrderDto, UpdateOrderDto } from './dto/create-order.dto';
+import { Order } from './entities/order.entity';
+import { OrdersService } from './orders.service';
 
 describe('OrdersService', () => {
   let service: OrdersService;
@@ -60,8 +59,8 @@ describe('OrdersService', () => {
   });
 
   it('should add two numbers', () => {
-    expect(1+2).toBe(3)
-  })
+    expect(1 + 2).toBe(31);
+  });
 
   describe('create', () => {
     it('should create a new order', async () => {
@@ -72,9 +71,9 @@ describe('OrdersService', () => {
     });
 
     it('should throw an error if quantity is not valid', async () => {
-      await expect(service.create({ ...mockCreateOrderDto, quantity: 2 }))
-        .rejects
-        .toThrow(HttpException);
+      await expect(
+        service.create({ ...mockCreateOrderDto, quantity: 2 }),
+      ).rejects.toThrow(HttpException);
     });
   });
 
@@ -96,9 +95,7 @@ describe('OrdersService', () => {
     it('should throw an error if order not found', async () => {
       (repository.findOne as jest.Mock).mockResolvedValueOnce(null);
 
-      await expect(service.findOne(999))
-        .rejects
-        .toThrow(HttpException);
+      await expect(service.findOne(999)).rejects.toThrow(HttpException);
     });
   });
 
@@ -113,9 +110,9 @@ describe('OrdersService', () => {
     it('should throw an error if order not found', async () => {
       (repository.findOne as jest.Mock).mockResolvedValueOnce(null);
 
-      await expect(service.update(999, mockUpdateOrderDto))
-        .rejects
-        .toThrow(HttpException);
+      await expect(service.update(999, mockUpdateOrderDto)).rejects.toThrow(
+        HttpException,
+      );
     });
   });
 
@@ -129,9 +126,7 @@ describe('OrdersService', () => {
     it('should throw an error if order not found', async () => {
       (repository.delete as jest.Mock).mockResolvedValueOnce({ affected: 0 });
 
-      await expect(service.remove(999))
-        .rejects
-        .toThrow(HttpException);
+      await expect(service.remove(999)).rejects.toThrow(HttpException);
     });
   });
 });

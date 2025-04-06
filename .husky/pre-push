@@ -1,1 +1,1 @@
-echo 'its pre push hook 🖕🏻'
+npm test
