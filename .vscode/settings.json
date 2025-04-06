@@ -1,4 +1,7 @@
 {
+  "[typescript]": {
+    "editor.formatOnSave": true
+  },
   "workbench.colorCustomizations": {
     "tree.indentGuidesStroke": "#f8f8f2",
     "editorIndentGuide.activeBackground": "#f8f8f2",
